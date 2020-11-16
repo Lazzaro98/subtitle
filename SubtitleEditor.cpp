@@ -7,6 +7,8 @@ int SubtitleEditor::isNumber(char c) {
 }
 
 int SubtitleEditor::loadSubtitle(string subtitles) {
+	if (prvi) delete prvi;
+	prvi = posl = nullptr;
 	int index = 0;
 	std::string id = "", vreme1 = "", vreme2 = "", tekst = "";
 	std::string trenutni = "";
