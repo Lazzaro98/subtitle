@@ -40,7 +40,7 @@ Time* Time::strToTime(std::string time) {
 bool Time::isValid(std::string time) {
 	bool valid = true;
 	//za pocetno vreme
-	if (time.length() != 29) return false; // Ako je duzina okej, samo treba da proverimo da li je na odredjenim mestima, okej cifra.
+	if (time.length() != 29) return false; // Ako je duzina okej, samo treba da proverimo da li su na odredjenim mestima okej cifre,zarezi,dvotacke,crtice,etc.
 	//proveri da li su minuti okej
 	if (time[3] > '5')return false;
 	//proveri da li su sekunde okej

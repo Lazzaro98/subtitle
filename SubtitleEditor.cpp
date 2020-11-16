@@ -127,18 +127,35 @@ void SubtitleEditor::deselect() {
 
 string SubtitleEditor::fontTekst(string tekst, int start, int end, char f) { //ova funkcija ce nad stringom stekst, pocevski od start pa do end pozicije, dodati <f> tag
 	//Zdravo svima. -> fontTekst("Zdravo svima.",7,11,'b') = "Zdravo <b>svima</b>"
-	if (start < 0) start = 0;
-	if (end > tekst.length() - 1)end = tekst.length() - 1;
+	if (start < 0 || start >tekst.length()-1) start = 0;
+	if (end > tekst.length() - 1 || end<0)end = tekst.length() - 1;
 
 	string noviTekst = "";
 	//HTML open i close tag koji treba da dodamo: da li je to <b> ili <i> ili stagod, u zavisnosti od onoga sta je funkciji prosledjeno
 	string openTag = "<" + string(1, f); openTag += ">"; //string(1,f); ce konvertovati karakter f u string i nalepice ga na openTag
 	string closeTag = "</" + string(1, f); closeTag += ">";// isto kao prethodno
-	for (int i = 0; i < start; i++)noviTekst += tekst[i]; //pratimo primer koji je gore naveden. Do pozicije starta necemo nista da formatiramo pa cemo samo prepisati tekst. noviTekst = "Zdravo "
+
+	int otv = 0,zatv=0;//otv broji '<', a zatv broji '>'. Ukoliko su oba parna, sve je okej i mozemo stilizovati. Ako ne, greska.
+
+	for (int i = 0; i < start; i++) { 	//pratimo primer koji je gore naveden. Do pozicije starta necemo nista da formatiramo pa cemo samo prepisati tekst. noviTekst = "Zdravo "
+		noviTekst += tekst[i];
+		if (tekst[i] == '<') otv++;
+		if (tekst[i] == '>') zatv++;
+	}
+
 	noviTekst += openTag; //Sada kad smo stigli do start-a, nalepimo tag. noviTekst = "Zdravo <b>"
-	for (int i = start; i < end + 1; i++)noviTekst += tekst[i];//sada sve do end-a, ponovo prepisujemo sve. noviTekst = "Zdravo <b>svima"
+	if (otv%2!=0 || zatv%2!=0) return "ERROR: GRESKA_U_STILIZOVANJU";
+	for (int i = start; i < end + 1; i++)//sada sve do end-a, ponovo prepisujemo sve. noviTekst = "Zdravo <b>svima"
+	{
+		noviTekst += tekst[i];
+		if (tekst[i] == '<') return "ERROR: GRESKA_U_STILIZOVANJU";
+	}
+
 	noviTekst += closeTag; //kada smo stigli do end-a, samo zatvorimo tag. noviTekst = "Zdravo <b>svima</b>"
+	
 	for (int i = end + 1; i < (tekst.length() + 1); i++)noviTekst += tekst[i]; //ukoliko nakon end-a ima jos teksta samo cemo ga prepisati. U nasem primeru nema vise teksa
+	
+	
 	return noviTekst; //uspesno smo formatirali jej
 }
 

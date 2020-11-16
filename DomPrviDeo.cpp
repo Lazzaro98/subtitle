@@ -13,6 +13,10 @@ int main()
     ss << input.rdbuf(); input.close();
     string subtitles = ss.str();
 
-
+    SubtitleEditor* SE = new SubtitleEditor();
+    SE->loadSubtitle(subtitles);
+    SE->addToSelection(1, 1000);
+    SE->boldText(17,100);
+    cout << SE->saveSubtitle();
     int x; cin >> x;
 }
