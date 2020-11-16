@@ -37,15 +37,15 @@ int SubtitleEditor::loadSubtitle(string subtitles) {
 		trenutni = "";
 		index++;
 		
-		while (!isNumber(subtitles[index + 2]) && index<(subtitles.length() - 1)) {
+		while ((subtitles[index]!='\n' || subtitles[index+1]!='\n') && index<(subtitles.length() - 1)) {
 			trenutni += subtitles[index];
 			index++;
 			if (index > subtitles.length() - 3)break;
 		}
 		tekst = trenutni;
 		trenutni = ""; //vreme1 <- string
-		Time* v1 = new Time(0,0,0,0);
-		Time* v2 = new Time(0,0,0,0);
+		Time* v1 = Time::strToTime(vreme1);
+		Time* v2 = Time::strToTime(vreme2);
 		int id1 = stoi(id);
 		Elem* nov = new Elem(id1, v1, v2, tekst);
 		dodajNaListu(nov);

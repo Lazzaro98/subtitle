@@ -21,14 +21,17 @@ int main()
 	int x; cin >> x;
 	SubtitleEditor* SE = new SubtitleEditor();
 	SE->loadSubtitle(subtitles);
-	SE->addToSelection(1, 18);
-	//SE->boldText(1, 6);
-
+	SE->addToSelection(1, 1800);
+	SE->boldText(1, 6);
+	SE->deselect();
+	SE->addToSelection(1400,1600);
+	SE->removeStyle();
+	cout << SE->saveSubtitle();
 	
 
 
 	cin >> x;
-	SubtitleEditor::Elem* pom = SE->prvi;
+	/*SubtitleEditor::Elem* pom = SE->prvi;
 	int brojac = 0;
 	while (pom->next) {
 		if (pom->next->tekst == "") {
@@ -38,7 +41,7 @@ int main()
 		}
 		pom = pom->next;
 	}
-	cout << "brojac je" << brojac;
+	cout << "brojac je" << brojac;*/
 	
 }
 
