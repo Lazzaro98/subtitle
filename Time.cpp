@@ -1,32 +1,34 @@
 #include "Time.h"
+using namespace std;
+
 std::string Time::timeToStr() { //Konvertujemo objekat tipa Time u string
 	//objekat Time npr izgleda ovako 01:21:05:050
-	std::string ret = ""; //na pocetku string je prazan
-	if (this->h / 10 == 0) ret += std::to_string(0); //Ako je broj h jednocifren, to zna;i da moramo da dodamo nulu na poetku stringa. ret="0"
-	ret += std::to_string(h);// konvertujemo h u string i nalepimo ga na string. ret="01"
+	string ret = ""; //na pocetku string je prazan
+	if (this->h / 10 == 0) ret += to_string(0); //Ako je broj h jednocifren, to zna;i da moramo da dodamo nulu na poetku stringa. ret="0"
+	ret += to_string(h);// konvertujemo h u string i nalepimo ga na string. ret="01"
 	ret += ":";//ret="01:"
 
 
-	if (min / 10 == 0) ret += std::to_string(0); //isto kao za h, s tim da ovde, u nasem primeru, necemo nalepiti nula jer je broj dvocifren. ret="01:"
-	ret += std::to_string(min); //isto kao za h. ret="01:21"
+	if (min / 10 == 0) ret += to_string(0); //isto kao za h, s tim da ovde, u nasem primeru, necemo nalepiti nula jer je broj dvocifren. ret="01:"
+	ret += to_string(min); //isto kao za h. ret="01:21"
 	ret += ":";// ret="01:21:"
 
-	if (sec / 10 == 0) ret += std::to_string(0); //nalepljujemo nulu jer je broj jednocifren. ret="01:21:0"
-	ret += std::to_string(sec); //nalepljujemo broj. ret="01:21:05"
+	if (sec / 10 == 0) ret += to_string(0); //nalepljujemo nulu jer je broj jednocifren. ret="01:21:0"
+	ret += to_string(sec); //nalepljujemo broj. ret="01:21:05"
 	ret += ","; //ret = "01:21:05,"
 
-	if (msec / 100 == 0)ret += std::to_string(0); //Nalepljujemo nulu jer je broj dvocifren. // ret = "01:21:05,0"
-	if (msec / 10 == 0)ret += std::to_string(0);//Ovo pita da li je broj jednocifren, pa da nalepi jos jednu nulu. U nasem primeru nece nista uraditi. ret = "01:21:05,0"
-	ret += std::to_string(msec); // ret = "01:21:05,050"
+	if (msec / 100 == 0)ret += to_string(0); //Nalepljujemo nulu jer je broj dvocifren. // ret = "01:21:05,0"
+	if (msec / 10 == 0)ret += to_string(0);//Ovo pita da li je broj jednocifren, pa da nalepi jos jednu nulu. U nasem primeru nece nista uraditi. ret = "01:21:05,0"
+	ret += to_string(msec); // ret = "01:21:05,050"
 	return ret;//Uspesno smo konvertovali Time u string, jej
 
 }
 
 Time* Time::strToTime(std::string time) {
-	int h, min, sec, msec;
+	int h, min, sec, msec;//10:32:12,564   
 	//ASCII kodovi: Kada od ASCII koda za broj oduzmes '0', dobijes zapravo taj broj.
 	//Algoritam objasni uzivo
-	h = ((time[0] - '0') * 10) + (time[1] - '0');
+	h = ((time[0] - '0') * 10) + (time[1] - '0');//char 'a'
 	min = ((time[3] - '0') * 10) + (time[4] - '0');
 	sec = ((time[6] - '0') * 10) + (time[7] - '0');
 	msec = ((time[9] - '0') * 100) + ((time[10] - '0') * 10) + (time[11] - '0');
@@ -35,6 +37,7 @@ Time* Time::strToTime(std::string time) {
 
 }
 
+// proveri da nije slovo.
 
 //00:00:00,000 --> 00:00:00,000
 bool Time::isValid(std::string time) {
@@ -64,4 +67,52 @@ bool Time::isValid(std::string time) {
 
 	//ako prodjemo sve ove if-ove, i ne udjemo ni u jedan, znaci da je time validan, pa cemo vratiti true
 	return true;
+}
+
+
+Time* Time::msecToTime(int ms) {
+	int seconds = 0;
+	int minutes = 0;
+	int hours = 0;
+	int miliseconds = ms % 1000;
+	if (ms / 1000 != 0) {
+		seconds = (ms / 1000) % 60;
+		minutes = (ms / (1000 * 60)) % 60;
+		hours = ms / (1000 * 60 * 60);
+	}
+
+	Time* time = new Time(hours, minutes, seconds, miliseconds);
+	return time;
+}
+
+int Time::timeToMsec(Time* time) {
+	int milisec = time->msec + (time->sec * 1000) + (time->min * 60 * 1000) + (time->h * 60 * 60 * 1000);
+	return milisec;
+}
+
+Time* Time::oduzimanjeVremena(Time* t1, Time* t2) {
+	int msec1 = timeToMsec(t1);
+	int msec2 = timeToMsec(t2);
+	int msec = 0;
+	if (msec1 > msec2) msec = msec1 - msec2;
+	Time* time = msecToTime(msec);
+
+	return time;
+}
+Time* Time::sabiranjeVremena(Time* t1, Time* t2) {
+	int msec1 = timeToMsec(t1);
+	int msec2 = timeToMsec(t2);
+	int msec = msec1 + msec2;
+	Time* time = msecToTime(msec);
+
+	return time;
+}
+
+int Time::trajanje(Time* t1, Time* t2) {
+	return timeToMsec(t2) - timeToMsec(t1);
+}
+
+bool Time::prviManji(Time* t1, Time* t2) { //pitamo da li je prvo vreme manje
+	bool b = (timeToMsec(t1) < timeToMsec(t2)); // radimo tako sto vremena pretvorimo u milisekunde i pitamo da li je vrednost prvog broja manja od vrednosti drugog 
+	return b; // vraca true ako je prvi manji, ili vraca false ako je drugi manji
 }
